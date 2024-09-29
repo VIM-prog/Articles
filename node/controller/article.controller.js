@@ -1,9 +1,9 @@
 const db = require('../db')
 class articleController {
     async createArticle(req, res) {
-        const {title, content, createdAt, updatedAt} = req.body
-        const newArticle = await db.query('INSERT INTO articles (title, content, "createdAt", "updatedAt") VALUES ($1, $2, $3, $4) RETURNING *', [title, content,createdAt,updatedAt])
-        res.json(newArticle.rows[0])
+        const { title, content } = req.body;
+        const newArticle = await db.query('INSERT INTO articles (title, content, "createdAt", "updatedAt") VALUES ($1, $2, NOW(), NOW()) RETURNING *',[title, content]);
+        res.json(newArticle.rows[0]);
     }
 
     async getArticles(req, res) {
@@ -19,7 +19,7 @@ class articleController {
 
     async updateArticle(req, res) {
         const {id, title, content} = req.body 
-        const article = await db.query('UPDATE articles set title = $1, content = $2 WHERE id = $3 RETURNING *', [title, content, id])
+        const article = await db.query('UPDATE articles set title = $1, content = $2, "updatedAt" = NOW() WHERE id = $3 RETURNING *', [title, content, id])
         res.json(article.rows[0])
     }
 

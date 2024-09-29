@@ -1,5 +1,6 @@
 const express = require('express')
 const articleRouter = require('./routes/article.routes')
+const commentRouter = require('./routes/comment.routes')
 
 const PORT = process.env.PORT || 8080
 
@@ -11,5 +12,6 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api', articleRouter)
+app.use('/api', commentRouter)
 
 app.listen(PORT, () => console.log(`server start on port ${PORT}`));

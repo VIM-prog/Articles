@@ -15,6 +15,12 @@ module.exports = {
         content: 'Интересная информация.',
         createdAt: new Date(),
         updatedAt: new Date()
+      },
+      {
+        idArticle: 1,
+        content: 'Интересная информация.',
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     ], {});
   },
