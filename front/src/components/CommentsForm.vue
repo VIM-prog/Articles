@@ -1,5 +1,5 @@
 <template>
-    <v-sheet class="mx-auto" width="500">
+    <v-sheet class="mx-auto" width="800">
       <form @submit.prevent="handleSubmit">
         <v-container class="pa-md-12">
           <div class="form-group">
@@ -8,13 +8,13 @@
               id="content"
               class="mx-auto"
               label="Content"
-              max-width="500"
+              max-width="800"
               persistent-placeholder
               placeholder="Your text..."
               variant="outlined"
             />
           </div>
-          <v-btn class="mt-2" type="submit" block>Submit</v-btn>
+          <v-btn class="mt-2" type="submit" block>Отправить</v-btn>
         </v-container>
       </form>
     </v-sheet>

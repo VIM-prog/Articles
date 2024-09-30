@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="mx-auto" width="500">
+  <v-sheet class="mx-auto" width="800">
     <form @submit.prevent="handleSubmit">
       <v-container class="pa-md-12">
         <div class="form-group">
