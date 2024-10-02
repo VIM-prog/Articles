@@ -8,14 +8,17 @@
 import { registerPlugins } from '@/plugins'
 
 // Components
-import App from './App.vue'
 
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import store from './store'; 
 
-// Composables
-import { createApp } from 'vue'
+const app = createApp(App);
 
-const app = createApp(App)
+registerPlugins(app);
 
-registerPlugins(app)
+app.use(router);
+app.use(store); 
 
-app.mount('#app')
+app.mount('#app');
