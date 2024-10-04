@@ -39,6 +39,28 @@ export default createStore({
     SET_ARTICLE(state, article) {
       state.article = article;
     },
+    ADD_COMMENT(state, comment) {
+      state.comments.push(comment);
+    },
+
+    SET_COMMENTS(state, comments) {
+      state.comments = comments;
+    },
+    
+    ADD_COMMENT(state, comment) {
+      state.comments.push(comment);
+    },
+
+    UPDATE_COMMENT(state, updatedComment) {
+      const index = state.comments.findIndex(comment => comment.id === updatedComment.id);
+      if (index !== -1) {
+        state.comments.splice(index, 1, updatedComment);
+      }
+    },
+
+    DELETE_COMMENT(state, commentId) {
+      state.comments = state.comments.filter(comment => comment.id !== commentId);
+    },
   },
   
   actions: {
@@ -96,12 +118,46 @@ export default createStore({
       }
     },
 
+    async createComment({ commit }, { articleId, content }) {
+      try {
+        const response = await axios.post(`http://localhost:8080/api/article/${articleId}/comment`, { content });
+        commit('ADD_COMMENT', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Failed to create comment:', error);
+        throw error;
+      }
+    },
+
+    async fetchComments({ commit }, articleId) {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/article/${articleId}/comments`);
+        commit('SET_COMMENTS', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Failed to fetch comments:', error);
+        throw error;
+      }
+    },
+
+    async deleteComment({ commit }, { articleId, commentId }) {
+      try {
+        await axios.delete(`http://localhost:8080/api/article/${articleId}/comment/${commentId}`);
+        commit('DELETE_COMMENT', commentId);
+      } catch (error) {
+        console.error('Failed to delete comment:', error);
+        throw error;
+      }
+    },
+
     async getCommentsByPeriod({ commit }, { dateFrom, dateTo }) {
       try {
         const response = await axios.get('http://localhost:8080/api/analytic/comments', {
           params: { dateFrom, dateTo },
         });
         commit('SET_COMMENTS', response.data);
+        const articleId = this.$route.params.id;
+        commit('SET_COMMENTS', response.data.filter(comment => comment.idArticle === articleId));
       } catch (error) {
         console.error('Ошибка при получении комментариев:', error);
       }

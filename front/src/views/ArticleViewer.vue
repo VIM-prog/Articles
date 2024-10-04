@@ -12,24 +12,26 @@
           <v-icon>mdi-delete</v-icon>
           <v-tooltip activator="parent" location="end">Удалить</v-tooltip>
         </v-btn>
+        <div class="text-right text-caption">
+          id: {{ article.id }}
+        </div>
       </v-card-title>
       <v-card-text>
         {{ article.content }}
       </v-card-text>
+      <CommentsForm :article-id="article.id"/>
     </v-card>
-
-    <ListComments :articleId="article.id" />
   </v-container>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
-import ListComments from "@/components/ListComments.vue";
+import CommentsForm from '../components/CommentsForm.vue';
 
 export default {
-  name: "ArticleView",
+  name: 'ArticleView',
   components: {
-    ListComments,
+    CommentsForm,
   },
   props: {
     id: {
@@ -38,23 +40,23 @@ export default {
     },
   },
   computed: {
-    ...mapState(["article"]),
+    ...mapState(['article', 'comments']),
   },
   mounted() {
     this.getArticle(this.id);
+    this.getComments(this.id);
   },
   methods: {
-    ...mapActions(["getArticle", "deleteArticle"]),
+    ...mapActions(['getArticle', 'deleteArticle', 'getComments']),
     editArticle(id) {
       this.$router.push(`/article/${id}/edit`);
     },
     async deleteArticle(id) {
       try {
-        await this.$store.dispatch("deleteArticle", id);
-        this.$router.push("/");
-        return true;
+        await this.deleteArticle(id);
+        this.$router.push('/');
       } catch (error) {
-        return false;
+        console.error('Failed to delete article:', error);
       }
     },
   },

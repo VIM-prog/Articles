@@ -30,7 +30,7 @@
             :error-messages="contentErrors"
           />
         </div>
-        <v-btn class="mt-2" type="submit" block>Submit</v-btn>
+        <v-btn class="mt-2" type="submit" block :disabled="isSubmitDisabled">Submit</v-btn>
       </v-container>
     </form>
   </v-sheet>
@@ -51,13 +51,15 @@ export default {
       localArticle: { id: null, title: '', content: '' },
       titleErrors: [],
       contentErrors: [],
-      titleRules: [(v) => !!v || 'Заголовок обязателен'],
     };
   },
   computed: {
     ...mapState(['article']),
     articleId() {
       return Number(this.route.params.id);
+    },
+    isSubmitDisabled() {
+      return !this.localArticle.title || !this.localArticle.content;
     },
   },
   methods: {

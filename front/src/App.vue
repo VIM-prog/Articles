@@ -12,6 +12,7 @@
 import VueHeader from './components/VueHeader.vue';
 import VueFooter from './components/VueFooter.vue';
 </script>
+
 <style scoped>
 .v-application {
   display: flex;
@@ -21,5 +22,6 @@ import VueFooter from './components/VueFooter.vue';
 
 .v-main {
   flex: 1 0 auto;
+  margin-bottom: 100px;
 }
 </style>

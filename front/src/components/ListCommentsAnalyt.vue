@@ -3,37 +3,37 @@
     <v-card-title>Комментарии</v-card-title>
     <v-list lines="two">
       <template v-for="(articleComments, articleId) in groupedComments" :key="articleId">
+        <div class="d-flex justify-center">
+          <v-subheader>Статья ID: {{ articleId }}</v-subheader>
+        </div>
         <template v-for="(comment, index) in articleComments" :key="comment.id">
           <v-list-item>
             <template v-slot:subtitle>
               {{ comment.content }}
             </template>
-            <template v-slot:append>
-              <v-btn icon @click="editComment(comment.id)">
-                <v-icon>mdi-pencil</v-icon>
-                <v-tooltip activator="parent" location="end">Редактировать</v-tooltip>
-              </v-btn>
-              <v-btn icon @click="deleteComment(comment.id)">
-                <v-icon>mdi-delete</v-icon>
-                <v-tooltip activator="parent" location="end">Удалить</v-tooltip>
-              </v-btn>
-            </template>
           </v-list-item>
         </template>
+        <v-divider v-if="articleId !== lastArticleId"></v-divider>
       </template>
     </v-list>
   </v-card>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from "vuex";
 
 export default {
+  props: {
+    articleId: {
+      type: Number,
+      required: true,
+    },
+  },
   computed: {
-    ...mapState(['comments']),
+    ...mapState(["comments"]),
     groupedComments() {
       const grouped = {};
-      this.comments.forEach(comment => {
+      this.comments.forEach((comment) => {
         if (!grouped[comment.idArticle]) {
           grouped[comment.idArticle] = [];
         }
@@ -41,13 +41,12 @@ export default {
       });
       return grouped;
     },
-  },
-  methods: {
-    editComment(commentId) {
-
+    lastArticleId() {
+      const articleIds = Object.keys(this.groupedComments);
+      return articleIds[articleIds.length - 1];
     },
-    deleteComment(commentId) {
-
+    commentsForArticle() {
+      return this.groupedComments[this.articleId] || [];
     },
   },
 };
