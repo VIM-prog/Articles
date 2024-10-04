@@ -15,7 +15,7 @@
             variant="outlined"
           />
         </div>
-        <v-btn class="mt-2" type="submit" block>Отправить</v-btn>
+        <v-btn class="mt-2" type="submit" block :disabled="isSubmitDisabled">Отправить</v-btn>
       </v-container>
     </form>
   </v-sheet>
@@ -36,6 +36,11 @@ export default {
     return {
       content: '',
     };
+  },
+  computed: {
+    isSubmitDisabled() {
+      return !this.content || this.content.trim() === '';
+    },
   },
   methods: {
     ...mapActions(['createComment', 'getComments']),
