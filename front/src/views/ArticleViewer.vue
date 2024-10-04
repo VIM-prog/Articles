@@ -17,13 +17,20 @@
         {{ article.content }}
       </v-card-text>
     </v-card>
+
+    <ListComments :articleId="article.id" />
   </v-container>
 </template>
+
 <script>
 import { mapState, mapActions } from "vuex";
+import ListComments from "@/components/ListComments.vue";
 
 export default {
   name: "ArticleView",
+  components: {
+    ListComments,
+  },
   props: {
     id: {
       type: Number,

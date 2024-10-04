@@ -4,12 +4,20 @@ import { createStore } from "vuex";
 export default createStore({
   state: {
     articles: [],
-    article: {}
+    article: {},
+    comments: [],
   },
-  
+  getters: {
+    comments: (state) => state.comments,
+  },
+
   mutations: {
     ADD_ARTICLE(state, article) {
       state.articles.push(article);
+    },
+
+    SET_COMMENTS(state, comments) {
+      state.comments = comments;
     },
 
     SET_ARTICLES(state, articles) {
@@ -30,7 +38,7 @@ export default createStore({
   
     SET_ARTICLE(state, article) {
       state.article = article;
-    }
+    },
   },
   
   actions: {
@@ -87,5 +95,16 @@ export default createStore({
         throw error;
       }
     },
-  }
+
+    async getCommentsByPeriod({ commit }, { dateFrom, dateTo }) {
+      try {
+        const response = await axios.get('http://localhost:8080/api/analytic/comments', {
+          params: { dateFrom, dateTo },
+        });
+        commit('SET_COMMENTS', response.data);
+      } catch (error) {
+        console.error('Ошибка при получении комментариев:', error);
+      }
+    },
+  },
 });

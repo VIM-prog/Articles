@@ -5,13 +5,13 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     await queryInterface.bulkInsert('comments', [
       {
-        idArticle: 1,
+        idArticle: 2,
         content: 'Отличная статья!',
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        idArticle: 1,
+        idArticle: 2,
         content: 'Вау.',
         createdAt: "27.09.2024",
         updatedAt: new Date()

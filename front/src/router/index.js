@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ArticleList from '../views/ArticleList.vue'
 import ArticleViewer from '@/views/ArticleViewer.vue'
 import ArticleForm from '@/views/ArticleForm.vue'
+import CommentsDate from '@/views/CommentsDate.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -25,6 +26,11 @@ const router = createRouter({
       component: ArticleForm,
       props: true
     },
+    {
+      path: '/analytic/comments',
+      component: CommentsDate,
+      props: true
+    }
   ]
 })
 
