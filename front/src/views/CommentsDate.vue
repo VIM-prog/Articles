@@ -22,7 +22,8 @@
     </v-row>
     <v-btn @click="submitDates" color="green" :disabled="isButtonDisabled">Принять</v-btn>
 
-    <ListCommentsAnalyt />
+    <!-- Передаем articleId в компонент ListCommentsAnalyt -->
+    <ListCommentsAnalyt :articleId="articleId" />
   </v-container>
 </template>
 
@@ -34,10 +35,17 @@ export default {
   components: {
     ListCommentsAnalyt,
   },
+  computed: {
+    articleId() {
+      return this.$route.params.id; 
+    },
+  },
   data() {
     return {
       startDate: '',
       endDate: '',
+      startDateErrors: [],
+      endDateErrors: [],
     };
   },
   computed: {
@@ -45,16 +53,20 @@ export default {
       return this.startDateErrors.length === 0 && this.endDateErrors.length === 0;
     },
     isButtonDisabled() {
-      return !this.startDate || !this.endDate;
+      return !this.startDate || !this.endDate || !this.isFormValid;
     },
   },
   methods: {
     ...mapActions(['getCommentsByPeriod']),
     submitDates() {
-      if (this.isFormValid) {
-        const dateFrom = this.startDate;
-        const dateTo = this.endDate;
-        this.getCommentsByPeriod({ dateFrom, dateTo });
+      if (this.startDate && this.endDate) {
+        this.getCommentsByPeriod({
+          dateFrom: this.startDate,
+          dateTo: this.endDate,
+          articleId: this.articleId, 
+        });
+      } else {
+        this.getComments(this.articleId);
       }
     },
     validateStartDate() {

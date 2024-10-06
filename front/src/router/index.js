@@ -15,7 +15,7 @@ const router = createRouter({
     {
       path: '/article/:id',
       component: ArticleViewer,
-      props: true
+      props: (route) => ({ id: parseInt(route.params.id) }),
     },
     {
       path: '/article/new',

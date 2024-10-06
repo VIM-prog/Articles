@@ -31,11 +31,11 @@ export default createStore({
       }
       state.article = updatedArticle;
     },
-  
-    DELETE_ARTICLE(state, articleId) {
-      state.articles = state.articles.filter(article => article.id !== articleId);
+
+    DELETE_COMMENT(state, commentId) {
+      state.comments = state.comments.filter(comment => comment.id !== commentId);
     },
-  
+
     SET_ARTICLE(state, article) {
       state.article = article;
     },
@@ -46,23 +46,19 @@ export default createStore({
     SET_COMMENTS(state, comments) {
       state.comments = comments;
     },
-    
     ADD_COMMENT(state, comment) {
       state.comments.push(comment);
     },
-
     UPDATE_COMMENT(state, updatedComment) {
       const index = state.comments.findIndex(comment => comment.id === updatedComment.id);
       if (index !== -1) {
         state.comments.splice(index, 1, updatedComment);
       }
     },
-
     DELETE_COMMENT(state, commentId) {
       state.comments = state.comments.filter(comment => comment.id !== commentId);
     },
   },
-  
   actions: {
     async createArticle({ commit }, article) {
       try {
@@ -74,7 +70,7 @@ export default createStore({
         throw error;
       }
     },
-    
+
     async fetchArticles({ commit }) {
       try {
         const response = await axios.get('http://localhost:8080/api/article');
@@ -85,7 +81,7 @@ export default createStore({
         throw error;
       }
     },
-  
+
     async deleteArticle({ commit }, articleId) {
       try {
         await axios.delete(`http://localhost:8080/api/article/${articleId}`);
@@ -128,18 +124,14 @@ export default createStore({
         throw error;
       }
     },
-
-    async fetchComments({ commit }, articleId) {
+    async getComments({ commit }, articleId) {
       try {
-        const response = await axios.get(`http://localhost:8080/api/article/${articleId}/comments`);
+        const response = await axios.get(`http://localhost:8080/api/article/${articleId}/comment`);
         commit('SET_COMMENTS', response.data);
-        return response.data;
       } catch (error) {
-        console.error('Failed to fetch comments:', error);
-        throw error;
+        console.error('Ошибка загрузки комментариев:', error);
       }
     },
-
     async deleteComment({ commit }, { articleId, commentId }) {
       try {
         await axios.delete(`http://localhost:8080/api/article/${articleId}/comment/${commentId}`);
@@ -148,16 +140,29 @@ export default createStore({
         console.error('Failed to delete comment:', error);
         throw error;
       }
+    }, 
+    
+    async updateComment({ commit }, { articleId, commentId, content }) {
+      try {
+        const response = await axios.put(`http://localhost:8080/api/article/${articleId}/comment/${commentId}`, { content });
+        commit('UPDATE_COMMENT', response.data);
+      } catch (error) {
+        console.error('Error updating comment:', error);
+        throw error;
+      }
     },
 
-    async getCommentsByPeriod({ commit }, { dateFrom, dateTo }) {
+    async getCommentsByPeriod({ commit }, { dateFrom, dateTo, articleId }) {
       try {
         const response = await axios.get('http://localhost:8080/api/analytic/comments', {
           params: { dateFrom, dateTo },
         });
-        commit('SET_COMMENTS', response.data);
-        const articleId = this.$route.params.id;
-        commit('SET_COMMENTS', response.data.filter(comment => comment.idArticle === articleId));
+        if (articleId) {
+          const filteredComments = response.data.filter(comment => comment.idArticle === articleId);
+          commit('SET_COMMENTS', filteredComments);
+        } else {
+          commit('SET_COMMENTS', response.data);
+        }
       } catch (error) {
         console.error('Ошибка при получении комментариев:', error);
       }

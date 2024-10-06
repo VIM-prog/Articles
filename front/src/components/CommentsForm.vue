@@ -3,7 +3,9 @@
     <form @submit.prevent="handleSubmit">
       <v-container class="pa-md-12">
         <div class="form-group">
-          <label for="content" style="text-align: center; display: block;">Комментарий:</label>
+          <label for="content" style="text-align: center; display: block;">
+            {{ isEditing ? 'Редактировать комментарий' : 'Комментарий:' }}
+          </label>
           <v-textarea
             v-model="content"
             id="content"
@@ -15,7 +17,9 @@
             variant="outlined"
           />
         </div>
-        <v-btn class="mt-2" type="submit" block :disabled="isSubmitDisabled">Отправить</v-btn>
+        <v-btn class="mt-2" type="submit" block :disabled="isSubmitDisabled">
+          {{ isEditing ? 'Сохранить' : 'Отправить' }}
+        </v-btn>
       </v-container>
     </form>
   </v-sheet>
@@ -25,35 +29,60 @@
 import { mapActions } from 'vuex';
 
 export default {
-  name: 'CommentForm',
+  name: 'CommentsForm',
   props: {
     articleId: {
       type: Number,
       required: true,
     },
+    commentId: {
+      type: Number,
+      default: null,
+    },
+    initialContent: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
-      content: '',
+      content: this.initialContent,
     };
   },
   computed: {
     isSubmitDisabled() {
       return !this.content || this.content.trim() === '';
     },
+    isEditing() {
+      return this.commentId !== null;
+    },
   },
   methods: {
-    ...mapActions(['createComment', 'getComments']),
+    ...mapActions(['createComment', 'updateComment', 'getComments']),
+
     async handleSubmit() {
       try {
-        await this.createComment({
-          articleId: this.articleId,
-          content: this.content,
-        });
+        if (this.isEditing) {
+          await this.updateComment({
+            articleId: this.articleId,
+            commentId: this.commentId,
+            content: this.content,
+          });
+        } else {
+          await this.createComment({
+            articleId: this.articleId,
+            content: this.content,
+          });
+        }
+
         this.content = '';
-        await this.getComments(this.articleId); 
+        await this.getComments(this.articleId);
+
+        if (this.isEditing) {
+          this.$emit('updated');
+        }
       } catch (error) {
-        console.error('Failed to submit comment:', error);
+        console.error('Failed comment updates:', error);
       }
     },
   },
